@@ -1,0 +1,23 @@
+from nba_api.stats.endpoints import leaguedashplayerstats
+import pandas as pd
+
+def poberi_nba_statistike(sezona='2022-23'):
+    # Sezona v formatu 'YYYY-YY', npr. '2022-23'
+    print(f"Pobiram podatke za sezono {sezona} ...")
+    
+    # Pokličemo API za sezonske igralne statistike (per game)
+    stats = leaguedashplayerstats.LeagueDashPlayerStats(season=sezona, per_mode_detailed='PerGame')
+    
+    # Pretvorimo v pandas DataFrame
+    df = stats.get_data_frames()[0]
+    
+    # Shranimo v CSV
+    filename = f"nba_stats_{sezona.replace('-', '')}.csv"
+    df.to_csv(filename, index=False)
+    print(f"Podatki shranjeni v datoteko: {filename}")
+    return df
+
+if __name__ == '__main__':
+    poberi_nba_statistike()
+
+

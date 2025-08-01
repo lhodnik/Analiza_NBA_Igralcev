@@ -1,0 +1,17 @@
+import pandas as pd
+
+def preberi_nba_statistike(sezona='2022-23'):
+    filename = f"nba_stats_{sezona.replace('-', '')}.csv"
+    try:
+        df = pd.read_csv(filename)
+        print(f"Prebrano {len(df)} igralcev iz datoteke {filename}")
+        return df
+    except FileNotFoundError:
+        print(f"Datoteka {filename} ni bila najdena. Najprej poberi podatke s poberi_igralce.py")
+        return None
+
+if __name__ == '__main__':
+    df = preberi_nba_statistike()
+    if df is not None:
+        print(df.head())
+

@@ -1,0 +1,46 @@
+import pandas as pd
+
+def preberi_in_izlusci_podatke(sezona='2022-23'):
+    filename = f'nba_stats_{sezona.replace("-", "")}.csv'
+    try:
+        df = pd.read_csv(filename, encoding='utf-8')
+    except FileNotFoundError:
+        print(f"Datoteka {filename} ni bila najdena. Najprej poberi podatke s poberi_igralce.py")
+        return None
+
+    # Filtriraj samo NBA igralce (moške)
+    df_nba = df[df['TEAM_ID'].astype(str).str.startswith('161061')].copy()
+
+    # Izberi stolpce
+    željeni_stolpci = [
+        'PLAYER_NAME', 'HEIGHT', 'MIN', 'PTS', 'REB', 'AST',
+        'FG_PCT', 'FG3_PCT', 'FT_PCT', 'COUNTRY'
+    ]
+    prisotni_stolpci = [col for col in željeni_stolpci if col in df_nba.columns]
+    tabela = df_nba[prisotni_stolpci].copy()
+
+    # Odstrani vrstice brez imena
+    tabela = tabela.dropna(subset=['PLAYER_NAME'])
+
+    # Preimenuj stolpce
+    tabela.rename(columns={
+        'PLAYER_NAME': 'Ime igralca',
+        'HEIGHT': 'Višina',
+        'MIN': 'Minut/tekmo',
+        'PTS': 'Točke',
+        'REB': 'Skoki',
+        'AST': 'Podaje',
+        'FG_PCT': 'FG%',
+        'FG3_PCT': 'FG3%',
+        'FT_PCT': 'FT%',
+        'COUNTRY': 'Državljanstvo'
+    }, inplace=True)
+
+    return tabela
+
+if __name__ == '__main__':
+    tabela_nba = preberi_in_izlusci_podatke()
+    if tabela_nba is not None:
+        print(tabela_nba.head(1000))
+
+
